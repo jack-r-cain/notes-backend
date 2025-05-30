@@ -12,10 +12,14 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
 app.use(requestLogger)
+app.use(unknownEndpoint)
 app.use(express.static('dist'))
 app.use(express.json())
-app.use(unknownEndpoint)
 
 app.get('/api/notes', (request, response) => {
   Note.find({}).then((notes) => {
@@ -52,10 +56,6 @@ app.delete('/api/notes/:id', (request, response) => {
 
   response.status(204).end()
 })
-
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
